@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package einride.todo.v1;
+
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "Todo.V1";
+option go_package = "github.com/einride-interviews/backend-software-engineer/proto/gen/go/einride/todo/v1;todov1";
+option java_multiple_files = true;
+option java_outer_classname = "TodoProto";
+option java_package = "tech.einride.todo.v1";
+option objc_class_prefix = "TXX";
+option php_namespace = "Todo\\V1";
+
+// A todo.
+message Todo {
+  option (google.api.resource) = {
+    type: "interview.einride.tech/Todo"
+    pattern: "todos/{todo}"
+    singular: "todo"
+    plural: "todos"
+  };
+  // Resource name of the todo.
+  string name = 1;
+  // The creation timestamp of the todo.
+  google.protobuf.Timestamp create_time = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // The last update timestamp of the todo.
+  //
+  // Note: update_time is updated when create/update operation is performed.
+  google.protobuf.Timestamp update_time = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // The title of the todo.
+  string title = 4 [(google.api.field_behavior) = REQUIRED];
+  // Flag indicating if the todo has been completed.
+  bool completed = 5;
+}
