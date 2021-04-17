@@ -16,7 +16,7 @@ func TestServer_CreateTodo(t *testing.T) {
 	got, err := server.CreateTodo(context.Background(), &todov1.CreateTodoRequest{})
 	assert.Assert(t, got == nil)
 	assert.Assert(t, err != nil)
-	assert.Equal(t, codes.Unimplemented, status.Code(err))
+	assert.Equal(t, codes.OK, status.Code(err))
 }
 
 func TestServer_GetTodo(t *testing.T) {
@@ -25,7 +25,7 @@ func TestServer_GetTodo(t *testing.T) {
 	got, err := server.GetTodo(context.Background(), &todov1.GetTodoRequest{})
 	assert.Assert(t, got == nil)
 	assert.Assert(t, err != nil)
-	assert.Equal(t, codes.Unimplemented, status.Code(err))
+	assert.Equal(t, codes.OK, status.Code(err))
 }
 
 func TestServer_UpdateTodo(t *testing.T) {
@@ -34,7 +34,7 @@ func TestServer_UpdateTodo(t *testing.T) {
 	got, err := server.UpdateTodo(context.Background(), &todov1.UpdateTodoRequest{})
 	assert.Assert(t, got == nil)
 	assert.Assert(t, err != nil)
-	assert.Equal(t, codes.Unimplemented, status.Code(err))
+	assert.Equal(t, codes.OK, status.Code(err))
 }
 
 func TestServer_DeleteTodo(t *testing.T) {
@@ -43,7 +43,7 @@ func TestServer_DeleteTodo(t *testing.T) {
 	got, err := server.DeleteTodo(context.Background(), &todov1.DeleteTodoRequest{})
 	assert.Assert(t, got == nil)
 	assert.Assert(t, err != nil)
-	assert.Equal(t, codes.Unimplemented, status.Code(err))
+	assert.Equal(t, codes.OK, status.Code(err))
 }
 
 func TestServer_ListTodos(t *testing.T) {
@@ -52,5 +52,5 @@ func TestServer_ListTodos(t *testing.T) {
 	got, err := server.ListTodos(context.Background(), &todov1.ListTodosRequest{})
 	assert.Assert(t, got == nil)
 	assert.Assert(t, err != nil)
-	assert.Equal(t, codes.Unimplemented, status.Code(err))
+	assert.Equal(t, codes.OK, status.Code(err))
 }
