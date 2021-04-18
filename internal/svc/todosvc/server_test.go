@@ -2,6 +2,7 @@ package todosvc
 
 import (
 	"context"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"testing"
 
 	todov1 "github.com/einride-interviews/backend-software-engineer/proto/gen/go/einride/todo/v1"
@@ -130,7 +131,7 @@ func TestServer_DeleteTodo(t *testing.T) {
 	gotAfterDelete, errAfterDelete := server.DeleteTodo(context.Background(), &todov1.DeleteTodoRequest{
 		Name: "todos/1",
 	})
-	assert.Assert(t, gotAfterDelete == nil)
+	assert.Assert(t, gotAfterDelete == &emptypb.Empty{})
 	assert.Assert(t, errAfterDelete == nil)
 	assert.Equal(t, codes.OK, status.Code(err))
 }
@@ -138,8 +139,37 @@ func TestServer_DeleteTodo(t *testing.T) {
 func TestServer_ListTodos(t *testing.T) {
 	// TODO: Implement me.
 	var server Server
+	myToDo1 := todov1.Todo{
+		Name:       "todos/1",
+		Title:      "Write shopping list",
+		Completed:  false,
+	}
+	_, err := server.CreateTodo(context.Background(), &todov1.CreateTodoRequest{
+		Todo:   &myToDo1,
+		TodoId: "1",
+	})
+	myToDo2 := todov1.Todo{
+		Name:       "todos/1",
+		Title:      "Write shopping list",
+		Completed:  false,
+	}
+	_, err = server.CreateTodo(context.Background(), &todov1.CreateTodoRequest{
+		Todo:   &myToDo2,
+		TodoId: "2",
+	})
+
 	got, err := server.ListTodos(context.Background(), &todov1.ListTodosRequest{})
-	assert.Assert(t, got == nil)
-	assert.Assert(t, err != nil)
+
+	gotTodo0 := got.Todos[0]
+	gotTodo1 := got.Todos[1]
+	assert.Equal(t, gotTodo0.Name, myToDo1.Name)
+	assert.Equal(t, gotTodo0.Title, myToDo1.Title)
+	assert.Equal(t, gotTodo0.Completed, myToDo1.Completed)
+
+	assert.Equal(t, gotTodo1.Name, myToDo2.Name)
+	assert.Equal(t, gotTodo1.Title, myToDo2.Title)
+	assert.Equal(t, gotTodo1.Completed, myToDo2.Completed)
+
+	assert.Assert(t, err == nil)
 	assert.Equal(t, codes.OK, status.Code(err))
 }

@@ -88,16 +88,29 @@ func (s *Server) UpdateTodo(c context.Context, r *todov1.UpdateTodoRequest) (*to
 func (s *Server) DeleteTodo(c context.Context, r *todov1.DeleteTodoRequest) (*emptypb.Empty, error) {
 	// TODO: Implement me.
 	if s.todos == nil{
-		return nil, status.Errorf(codes.NotFound, "The requested todo is not found")
+		return &emptypb.Empty{}, status.Errorf(codes.NotFound, "The requested todo is not found")
 	}
 	todoToDelete := r.Name[6:]
 	if _, ok := s.todos[todoToDelete]; ok{
 		delete(s.todos, todoToDelete)
 	}
-	return nil, status.Errorf(codes.OK, "Todo deleted successfully")
+	return &emptypb.Empty{}, status.Errorf(codes.OK, "Todo deleted successfully")
 }
 
 func (s *Server) ListTodos(context.Context, *todov1.ListTodosRequest) (*todov1.ListTodosResponse, error) {
 	// TODO: Implement me.
-	return nil, status.Errorf(codes.Unimplemented, "method ListTodos not implemented")
+	if s.todos == nil{
+		return nil, status.Errorf(codes.NotFound, "No todos")
+	}
+
+	var todosArray []*todov1.Todo
+
+	for _, v := range s.todos {
+		todosArray = append(todosArray, v)
+	}
+
+	return &todov1.ListTodosResponse{
+		Todos:         todosArray,
+		NextPageToken: "",
+	}, status.Errorf(codes.OK, "method ListTodos not implemented")
 }
