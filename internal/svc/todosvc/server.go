@@ -2,9 +2,12 @@ package todosvc
 
 import (
 	"context"
+	"fmt"
+	"github.com/golang/protobuf/protoc-gen-go/generator"
 	"sync"
 
 	todov1 "github.com/einride-interviews/backend-software-engineer/proto/gen/go/einride/todo/v1"
+	"github.com/mennanov/fieldmask-utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -55,9 +58,30 @@ func (s *Server) GetTodo(c context.Context, r *todov1.GetTodoRequest) (*todov1.T
 	}
 }
 
-func (s *Server) UpdateTodo(context.Context, *todov1.UpdateTodoRequest) (*todov1.Todo, error) {
+func (s *Server) UpdateTodo(c context.Context, r *todov1.UpdateTodoRequest) (*todov1.Todo, error) {
 	// TODO: Implement me.
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateTodo not implemented")
+	if s.todos == nil{
+		return nil, status.Errorf(codes.NotFound, "The requested todo is not found")
+	}
+	s.Lock()
+	todo := r.Todo
+
+	// The to-do's `name` field is used to identify the to-do to be updated.
+	key := r.Todo.Name[6:]
+
+	// created a mask
+	todoDst := &todov1.Todo{}
+	paths, err := fieldmask_utils.MaskFromPaths(r.UpdateMask.Paths, generator.CamelCase)
+	fmt.Println(err)
+
+	// update to-do with mask
+	err = fieldmask_utils.StructToStruct(paths, todo, todoDst)
+	fmt.Println(err)
+
+	s.todos[key] = todoDst
+	todoUpdated := s.todos[key]
+
+	return todoUpdated, status.Errorf(codes.OK, "Todo updated successfully")
 }
 
 func (s *Server) DeleteTodo(context.Context, *todov1.DeleteTodoRequest) (*emptypb.Empty, error) {
