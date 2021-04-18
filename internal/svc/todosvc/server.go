@@ -59,7 +59,7 @@ func (s *Server) GetTodo(c context.Context, r *todov1.GetTodoRequest) (*todov1.T
 }
 
 func (s *Server) UpdateTodo(c context.Context, r *todov1.UpdateTodoRequest) (*todov1.Todo, error) {
-	// TODO: Implement me.
+	// Done: Implement me.
 	if s.todos == nil{
 		return nil, status.Errorf(codes.NotFound, "The requested todo is not found")
 	}
@@ -85,9 +85,16 @@ func (s *Server) UpdateTodo(c context.Context, r *todov1.UpdateTodoRequest) (*to
 	return todoUpdated, status.Errorf(codes.OK, "Todo updated successfully")
 }
 
-func (s *Server) DeleteTodo(context.Context, *todov1.DeleteTodoRequest) (*emptypb.Empty, error) {
+func (s *Server) DeleteTodo(c context.Context, r *todov1.DeleteTodoRequest) (*emptypb.Empty, error) {
 	// TODO: Implement me.
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteTodo not implemented")
+	if s.todos == nil{
+		return nil, status.Errorf(codes.NotFound, "The requested todo is not found")
+	}
+	todoToDelete := r.Name[6:]
+	if _, ok := s.todos[todoToDelete]; ok{
+		delete(s.todos, todoToDelete)
+	}
+	return nil, status.Errorf(codes.OK, "Todo deleted successfully")
 }
 
 func (s *Server) ListTodos(context.Context, *todov1.ListTodosRequest) (*todov1.ListTodosResponse, error) {

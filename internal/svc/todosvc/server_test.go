@@ -111,9 +111,27 @@ func TestServer_UpdateTodo(t *testing.T) {
 func TestServer_DeleteTodo(t *testing.T) {
 	// TODO: Implement me.
 	var server Server
-	got, err := server.DeleteTodo(context.Background(), &todov1.DeleteTodoRequest{})
-	assert.Assert(t, got == nil)
-	assert.Assert(t, err != nil)
+	// create a to-do
+	myToDo := todov1.Todo{
+		Name:       "todos/1",
+		CreateTime: nil,
+		UpdateTime: nil,
+		Title:      "Write shopping list",
+		Completed:  false,
+	}
+	got, err := server.CreateTodo(context.Background(), &todov1.CreateTodoRequest{
+		Todo:   &myToDo,
+		TodoId: "1",
+	})
+	assert.Assert(t, got != nil)
+	assert.Assert(t, err == nil)
+
+	// delete the to-do
+	gotAfterDelete, errAfterDelete := server.DeleteTodo(context.Background(), &todov1.DeleteTodoRequest{
+		Name: "todos/1",
+	})
+	assert.Assert(t, gotAfterDelete == nil)
+	assert.Assert(t, errAfterDelete == nil)
 	assert.Equal(t, codes.OK, status.Code(err))
 }
 
