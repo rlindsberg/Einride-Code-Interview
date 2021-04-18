@@ -11,11 +11,21 @@ import (
 )
 
 func TestServer_CreateTodo(t *testing.T) {
-	// TODO: Implement me.
+	// Done: Implement me.
 	var server Server
-	got, err := server.CreateTodo(context.Background(), &todov1.CreateTodoRequest{})
-	assert.Assert(t, got == nil)
-	assert.Assert(t, err != nil)
+	myToDo := todov1.Todo{
+		Name:       "Task 1",
+		CreateTime: nil,
+		UpdateTime: nil,
+		Title:      "Write shopping list",
+		Completed:  false,
+	}
+	got, err := server.CreateTodo(context.Background(), &todov1.CreateTodoRequest{
+		Todo:   &myToDo,
+		TodoId: "1",
+	})
+	assert.Assert(t, got != nil)
+	assert.Assert(t, err == nil)
 	assert.Equal(t, codes.OK, status.Code(err))
 }
 
