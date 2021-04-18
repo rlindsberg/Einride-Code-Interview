@@ -9,5 +9,6 @@ export INTERVIEWCTL_TODO_ADDRESS=localhost:8080
 export INTERVIEWCTL_TODO_INSECURE=true
 alias interviewctl='go run ./proto/gen/cli'
 
+echo 'testing create todo'
 interviewctl todo create-todo --todo_id 1 --todo.title 'Write code'
 interviewctl todo get-todo --name 'todos/1'

@@ -38,9 +38,21 @@ func (s *Server) CreateTodo(c context.Context,  r *todov1.CreateTodoRequest) (*t
 	return todo, status.Errorf(codes.OK, "Todo created successfully")
 }
 
-func (s *Server) GetTodo(context.Context, *todov1.GetTodoRequest) (*todov1.Todo, error) {
-	// TODO: Implement me.
-	return nil, status.Errorf(codes.Unimplemented, "method GetTodo not implemented")
+func (s *Server) GetTodo(c context.Context, r *todov1.GetTodoRequest) (*todov1.Todo, error) {
+	// Done: Implement me.
+	if s.todos == nil{
+		return nil, status.Errorf(codes.NotFound, "The requested todo is not found")
+	}
+	s.Lock()
+	key := r.Name[6:]
+
+	if res, ok := s.todos[key]; ok{
+		s.Unlock()
+		return res, status.Errorf(codes.OK, "Todo get successfully")
+	} else{
+		s.Unlock()
+		return nil, status.Errorf(codes.NotFound, "The requested todo is not found")
+	}
 }
 
 func (s *Server) UpdateTodo(context.Context, *todov1.UpdateTodoRequest) (*todov1.Todo, error) {

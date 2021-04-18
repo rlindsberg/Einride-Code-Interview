@@ -30,12 +30,43 @@ func TestServer_CreateTodo(t *testing.T) {
 }
 
 func TestServer_GetTodo(t *testing.T) {
-	// TODO: Implement me.
-	var server Server
-	got, err := server.GetTodo(context.Background(), &todov1.GetTodoRequest{})
-	assert.Assert(t, got == nil)
-	assert.Assert(t, err != nil)
-	assert.Equal(t, codes.OK, status.Code(err))
+	// Done: Implement me.
+	t.Run("Get before create", func(t *testing.T) {
+		var server Server
+		got, err := server.GetTodo(context.Background(), &todov1.GetTodoRequest{
+			Name: "todos/1",
+		})
+		assert.Assert(t, got == nil)
+		assert.Assert(t, err != nil)
+		assert.Equal(t, codes.NotFound, status.Code(err))
+	})
+
+	t.Run("Create and get", func(t *testing.T) {
+		var server Server
+		// create todo
+		myToDo := todov1.Todo{
+			Name:       "Task 1",
+			CreateTime: nil,
+			UpdateTime: nil,
+			Title:      "Write shopping list",
+			Completed:  false,
+		}
+		got, err := server.CreateTodo(context.Background(), &todov1.CreateTodoRequest{
+			Todo:   &myToDo,
+			TodoId: "1",
+		})
+		assert.Assert(t, got != nil)
+		assert.Assert(t, err == nil)
+		assert.Equal(t, codes.OK, status.Code(err))
+		got, err = server.GetTodo(context.Background(), &todov1.GetTodoRequest{
+			Name: "todos/1",
+		})
+		assert.Assert(t, got != nil)
+		assert.Equal(t, got.Name, myToDo.Name)
+		assert.Equal(t, got.Title, myToDo.Title)
+		assert.Assert(t, err == nil)
+		assert.Equal(t, codes.OK, status.Code(err))
+	})
 }
 
 func TestServer_UpdateTodo(t *testing.T) {
