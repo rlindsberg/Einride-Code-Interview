@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"gotest.tools/v3/assert"
+	field_mask "google.golang.org/genproto/protobuf/field_mask"
 )
 
 func TestServer_CreateTodo(t *testing.T) {
@@ -72,9 +73,38 @@ func TestServer_GetTodo(t *testing.T) {
 func TestServer_UpdateTodo(t *testing.T) {
 	// TODO: Implement me.
 	var server Server
-	got, err := server.UpdateTodo(context.Background(), &todov1.UpdateTodoRequest{})
-	assert.Assert(t, got == nil)
-	assert.Assert(t, err != nil)
+
+	// create a to-do
+	myToDo := todov1.Todo{
+		Name:       "todos/1",
+		CreateTime: nil,
+		UpdateTime: nil,
+		Title:      "Write shopping list",
+		Completed:  false,
+	}
+	got, err := server.CreateTodo(context.Background(), &todov1.CreateTodoRequest{
+		Todo:   &myToDo,
+		TodoId: "1",
+	})
+
+	// update title but not completed
+	newToDo := todov1.Todo{
+		Name:       "todos/1",
+		CreateTime: nil,
+		UpdateTime: nil,
+		Title:      "Write washing list",
+		Completed:  true,
+	}
+	mask := field_mask.FieldMask{
+		Paths: []string{"Title"},
+	}
+	got, err = server.UpdateTodo(context.Background(), &todov1.UpdateTodoRequest{
+		Todo:       &newToDo,
+		UpdateMask: &mask,
+	})
+	assert.Assert(t, got.Title == newToDo.Title)
+	assert.Assert(t, got.Completed != newToDo.Completed)
+	assert.Assert(t, err == nil)
 	assert.Equal(t, codes.OK, status.Code(err))
 }
 

@@ -81,6 +81,7 @@ func (s *Server) UpdateTodo(c context.Context, r *todov1.UpdateTodoRequest) (*to
 	s.todos[key] = todoDst
 	todoUpdated := s.todos[key]
 
+	s.Unlock()
 	return todoUpdated, status.Errorf(codes.OK, "Todo updated successfully")
 }
 
